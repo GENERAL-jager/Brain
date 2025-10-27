@@ -18,27 +18,27 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup Node
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
-          # Removed cache because you don’t have a lock file yet
+          node-version: 20
+          # 🚫 Disable automatic caching completely
           cache: false
 
       - name: Install dependencies
-        # Use npm install instead of npm ci (which needs a lock file)
+        # npm ci requires a lock file; npm install does not
         run: npm install
 
-      - name: Build
+      - name: Build project
         run: npm run build
 
-      - name: Setup Pages
+      - name: Setup GitHub Pages
         uses: actions/configure-pages@v4
 
-      - name: Upload artifact
+      - name: Upload build artifacts
         uses: actions/upload-pages-artifact@v3
         with:
           path: './dist'
