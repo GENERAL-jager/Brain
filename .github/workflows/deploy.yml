@@ -1,8 +1,8 @@
-name: Deploy Jekyll Site to GitHub Pages
+name: Deploy to GitHub Pages
 
 on:
   push:
-    branches: ["main"]
+    branches: [ main ]
   workflow_dispatch:
 
 permissions:
@@ -21,20 +21,28 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # GitHub provides Ruby and Jekyll automatically in the Pages environment
-      - name: Setup GitHub Pages
-        uses: actions/configure-pages@v5
-
-      - name: Build site with Jekyll
-        uses: actions/jekyll-build-pages@v1
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          source: ./
-          destination: ./_site
+          node-version: 20
+          # 🚫 Disable caching so no lock file is required
+          cache: false
 
-      - name: Upload site artifact
+      - name: Install dependencies
+        # npm install works without a package-lock.json
+        run: npm install
+
+      - name: Build project
+        run: npm run build
+
+      - name: Setup GitHub Pages
+        uses: actions/configure-pages@v4
+
+      - name: Upload build artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./_site
+          # Update this if your build output folder is different (e.g., build/, public/)
+          path: ./dist
 
   deploy:
     environment:
